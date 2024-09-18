@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sortable Table</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            cursor: pointer;
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Names and Points</h2>
+<table id="data-table">
+    <thead>
+        <tr>
+            <th onclick="sortTable(0)">Name</th>
+            <th onclick="sortTable(1)">Points</th>
+            <th onclick="sortTable(2)">Level</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Table rows will be populated here -->
+    </tbody>
+</table>
+
+<script>
+    // Sample data
+    const data = [
+        { fullName: 'John.Doe', points: 120, level: 'Green' },
+        { fullName: 'Jane.Smith', points: 150, level: 'Blue' },
+        { fullName: 'Alice.Johnson', points: 90, level: 'Red' },
+        { fullName: 'Bob.Brown', points: 200, level: 'Gold' }
+    ];
+
+    // Function to populate the table
+    function populateTable() {
+        const tbody = document.getElementById('data-table').getElementsByTagName('tbody')[0];
+        tbody.innerHTML = ''; // Clear existing rows
+
+        data.forEach(entry => {
+            const nameParts = entry.fullName.split('.');
+            const firstName = nameParts[0];
+            const lastInitial = nameParts[1].charAt(0);
+
+            const row = tbody.insertRow();
+            row.insertCell(0).textContent = `${firstName} ${lastInitial}.`;
+            row.insertCell(1).textContent = entry.points;
+            row.insertCell(2).textContent = entry.level;
+        });
+    }
+
+    // Function to sort the table
+    function sortTable(columnIndex) {
+        const tbody = document.getElementById('data-table').getElementsByTagName('tbody')[0];
+        const rows = Array.from(tbody.rows);
+
+        const isAscending = !tbody.dataset.sortOrder || tbody.dataset.sortOrder === 'desc';
+        tbody.dataset.sortOrder = isAscending ? 'asc' : 'desc';
+
+        rows.sort((rowA, rowB) => {
+            const cellA = columnIndex === 1 ? parseInt(rowA.cells[columnIndex].textContent) : rowA.cells[columnIndex].textContent;
+            const cellB = columnIndex === 1 ? parseInt(rowB.cells[columnIndex].textContent) : rowB.cells[columnIndex].textContent;
+
+            return isAscending ? (cellA > cellB ? 1 : -1) : (cellA < cellB ? 1 : -1);
+        });
+
+        // Clear existing rows and append sorted rows
+        tbody.innerHTML = '';
+        rows.forEach(row => tbody.appendChild(row));
+    }
+
+    // Initial population of the table
+    populateTable();
+</script>
+
+</body>
+</html>
